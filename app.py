@@ -3,7 +3,7 @@ import chatbot
 import detection
 import pyttsx3
 
-MODEL_PATH = r"C:\Users\mhmdf\Documents\freelance\recipe_chatbot\models\best_908.pt"
+MODEL_PATH = r"C:\Users\models\best_908.pt"
 CONFIDENCE = 0.45
 
 last_prompt=""
