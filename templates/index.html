@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Simple Flask Chatbot</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        #chat-container {
+            height: 300px;
+            border: 1px solid #ccc;
+            padding: 10px;
+            overflow-y: auto;
+            margin-bottom: 10px;
+        }
+        #user-input {
+            width: 80%;
+            padding: 8px;
+        }
+        .user-message {
+            color: blue;
+            margin-bottom: 10px;
+        }
+        .bot-message {
+            color: green;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Simple Flask Chatbot</h1>
+    <div id="chat-container"></div>
+    <div>
+        <input type="text" id="user-input" placeholder="Type your message...">
+        <button onclick="sendMessage()">Send</button>
+    </div>
+
+    <script>
+        function addMessage(message, sender) {
+            const chatContainer = document.getElementById('chat-container');
+            const messageElement = document.createElement('div');
+            messageElement.textContent = message;
+            messageElement.className = sender + '-message';
+            chatContainer.appendChild(messageElement);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        function sendMessage() {
+            const userInput = document.getElementById('user-input');
+            const userMessage = userInput.value.trim();
+            
+            if (userMessage) {
+                // Display user message
+                addMessage('You: ' + userMessage, 'user');
+                
+                // Clear input field
+                userInput.value = '';
+                
+                // Send request to Flask backend
+                fetch('/get_response', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({message: userMessage}),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Display bot response
+                    addMessage('Bot: ' + data.response, 'bot');
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    addMessage('Bot: Sorry, there was an error processing your request.', 'bot');
+                });
+            }
+        }
+
+        // Allow sending message with Enter key
+        document.getElementById('user-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+    </script>
+</body>
+</html>
